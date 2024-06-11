@@ -53,10 +53,13 @@ class UserModel(db.Model):
         return self.query.filter_by(email=email).first()
 
     def create_user(self):
+        has_user_exist = self.get_user_by_email(self.email)
+        if has_user_exist:
+            return False, 'User already exists'
         self.password, self.salt = Cryptographer.encrypt(self.password)
         db.session.add(self)
         db.session.commit()
-        return self
+        return self, None
 
     def update_user(self, new_user: 'UserModel'):
         for key, value in new_user.to_dict().items():

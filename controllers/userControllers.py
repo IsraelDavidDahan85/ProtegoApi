@@ -14,12 +14,16 @@ class UserControllers:
     def register_user(req):
         data = req.get_json()
         user, token = UserServices.register_user(data)
+        if not user:
+            return {'message': 'User already exists'}, 400
         return {'message': 'success', 'data': user, 'token': token}, 201
 
     @staticmethod
     def create_user(req):
         data = req.get_json()
         user = UserServices.create_user(data)
+        if not user:
+            return {'message': 'User already exists'}, 400
         return {'message': 'success', 'data': user}, 201
 
     @staticmethod

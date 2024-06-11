@@ -18,7 +18,7 @@ class UserServices:
         log.info('register_user', data=data)
         user_model, msg = UserModel(**data).create_user()
         if not user_model:
-            log.error('User already exists', user=data['email'])
+            log.error(msg, user=data['email'])
             return None, msg
         user_model.generate_token()
         return user_schema.dump(user_model), user_model.token
@@ -46,6 +46,7 @@ class UserServices:
     def create_user(data):
         user_model, msg = UserModel(**data).create_user()
         if not user_model:
+            log.error(msg, user=data['email'])
             return msg
         return user_schema.dump(user_model)
 

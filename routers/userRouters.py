@@ -17,8 +17,8 @@ class UserRouter(Resource):
         return result
 
     @staticmethod
-    def put():
-        return UserControllers.update_user(request)
+    def put(user_id):
+        return UserControllers.update_user(request, user_id)
 
     @staticmethod
     def delete():

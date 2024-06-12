@@ -15,7 +15,7 @@ class UserServices:
         return None, None
     @staticmethod
     def register_user(data):
-        log.info('register_user', data=data)
+        log.debug('register_user', data=data)
         user_model, msg = UserModel(**data).create_user()
         if not user_model:
             log.error(msg, user=data['email'])
@@ -26,6 +26,7 @@ class UserServices:
 
     @staticmethod
     def get_all_users(limit, offset):
+        log.debug('get_all_users', limit=limit, offset=offset)
         user_model = UserModel()
         users = user_model.get_all_users(limit, offset)
         return users_schema.dump(users)
@@ -38,12 +39,14 @@ class UserServices:
 
     @staticmethod
     def get_user_by_email(email):
+        log.debug('get_user_by_email', email=email)
         user_model = UserModel()
         user = user_model.get_user_by_email(email)
         return user_schema.dump(user)
 
     @staticmethod
     def create_user(data):
+        log.debug('create_user', data=data)
         user_model, msg = UserModel(**data).create_user()
         if not user_model:
             log.error(msg, user=data['email'])
@@ -52,20 +55,28 @@ class UserServices:
 
     @staticmethod
     def update_user(user_id, data):
-        new_user = UserModel(**data)
+        log.debug('update_user', user_id=user_id, data=data)
+        # new_user = UserModel(**data)
         user_model = UserModel().get_user_by_id(user_id)
-        user_model.update_user(new_user)
-        return user_schema.dump(user_model)
+        if not user_model:
+            return None, 'User not found'
+        has_user_updated, msg = user_model.update_user(**data)
+        if not has_user_updated:
+            return None, msg
+        return user_schema.dump(user_model), None
 
     @staticmethod
     def update_user_by_email(email, data):
-        new_user = UserModel(**data)
+        log.debug('update_user_by_email', email=email, data=data)
         user_model = UserModel().get_user_by_email(email)
-        user_model.update_user(new_user)
-        return user_schema.dump(user_model)
+        has_user_updated, msg = user_model.update_user(**data)
+        if not has_user_updated:
+            return None, msg
+        return user_schema.dump(user_model), None
 
     @staticmethod
     def delete_user(user_id):
+        log.debug('delete_user', user_id=user_id)
         user_model = UserModel()
         user_model.delete_user(user_id)
         return user_schema.dump(user_model)

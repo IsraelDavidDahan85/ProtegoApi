@@ -61,14 +61,21 @@ class UserModel(db.Model):
         db.session.commit()
         return self, None
 
-    def update_user(self, new_user: 'UserModel'):
-        for key, value in new_user.to_dict().items():
-            if value:
-                setattr(self, key, value)
-            if key == 'password':
+    def update_user(self, **new_user):
+        if 'email' in new_user:
+            user = self.get_user_by_email(new_user['email'])
+            if user and user.id != self.id:
+                return False, 'This email is already taken'
+
+        for key, value in new_user.items():
+            if key == 'password' and value is not None:
                 self.password, self.salt = Cryptographer.encrypt(value)
+            elif value is None:
+                continue
+            else:
+                setattr(self, key, value)
         db.session.commit()
-        return self
+        return self, None
 
     def delete_user(self, user_id: int):
         user = db.query.filter_by(id=user_id).first()

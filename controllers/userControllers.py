@@ -32,10 +32,11 @@ class UserControllers:
         return {'data': user}, 200
 
     @staticmethod
-    def update_user(req):
-        user_id = req.args.get('id')
+    def update_user(req, user_id):
         data = req.get_json()
-        user = UserServices.update_user(user_id, data)
+        user, msg = UserServices.update_user(user_id, data)
+        if not user:
+            return {'message': msg}, 404
         return {'data': user}, 200
 
     @staticmethod

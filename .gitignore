@@ -2,3 +2,6 @@
 static
 templates
 *.pyc
+
+# Ignore dynaconf secret files
+config/.secrets.yaml

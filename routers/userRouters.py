@@ -5,7 +5,7 @@ from controllers.userControllers import UserControllers
 
 class UserRouter(Resource):
     @staticmethod
-    def get(user_id=None):
+    def get( user_id=None):
         if user_id:
             return UserControllers.get_user_by_id(user_id)
         return UserControllers.get_all_users(request)
